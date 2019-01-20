@@ -9,23 +9,20 @@ package com.yundingshuyuan.website.entity;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Data
-@Entity
+@Entity(name = "t_user")
 public class User {
     /**
      * 用户id
      */
     @Id
-    @Column(name = "user_id")
+    @Column(name = "id")
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid",strategy = "uuid")
-    private String userId;
+    private String id;
 
     /**
      * 用户名(手机号)

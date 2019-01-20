@@ -6,5 +6,10 @@
  */
 package com.yundingshuyuan.website.service;
 
+import com.yundingshuyuan.website.form.UserRegisterForm;
+
+import javax.servlet.http.HttpServletRequest;
+
 public interface UserService {
+    void registerUser(UserRegisterForm userRegisterForm);
 }

@@ -6,5 +6,20 @@
  */
 package com.yundingshuyuan.website.exception;
 
-public class UserException {
+import com.yundingshuyuan.website.enums.ErrorCodeEnum;
+
+public class UserException extends SysException{
+
+    public UserException(Integer code,String message){
+        super(code,message);
+    }
+
+    public UserException(){
+
+    }
+
+    public UserException(ErrorCodeEnum errorCodeEnum){
+        super(errorCodeEnum);
+    }
+
 }
