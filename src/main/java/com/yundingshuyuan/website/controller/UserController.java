@@ -7,8 +7,11 @@
 package com.yundingshuyuan.website.controller;
 
 import com.yundingshuyuan.website.controller.support.BaseController;
+import com.yundingshuyuan.website.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserController extends BaseController {
-
+    @Autowired
+    UserService userService;
 
 }
