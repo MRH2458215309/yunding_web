@@ -26,9 +26,19 @@ public enum ErrorCodeEnum {
     USERNAME_ERROR(1001,"用户名错误"),
 
     /**
-     *
+     *参数错误
      */
-    PARAM_ERROR(1001,"参数错误");
+    PARAM_ERROR(1001,"参数错误"),
+
+    /**
+     * 验证码错误
+     */
+    CODE_ERROR(1002,"图片验证码错误"),
+
+    /**
+     *手机验证码错误
+     */
+    PHONE_CODE_ERROR(1002,"手机验证码错误");
     ErrorCodeEnum(Integer code,String message){
         this.code =code;
         this.message = message;
@@ -37,4 +47,6 @@ public enum ErrorCodeEnum {
     Integer code;
 
     String message;
+
+
 }

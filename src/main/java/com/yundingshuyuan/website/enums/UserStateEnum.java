@@ -6,5 +6,20 @@
  */
 package com.yundingshuyuan.website.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum UserStateEnum {
+    NOMAL(0,"正常"),
+
+    DISABLED(-1,"封号")
+;
+    UserStateEnum(Integer status, String desc) {
+        this.status = status;
+        this.desc = desc;
+    }
+
+    private Integer status;
+
+    private String desc;
 }

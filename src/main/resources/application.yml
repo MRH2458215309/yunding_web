@@ -6,10 +6,11 @@ spring:
     url:  jdbc:mysql://106.15.198.212:3306/db_yunding_web
     username: root
     password: leeyf100%
-    jpa:
-      database: mysql
-      hibernate:
-        ddl-auto: update
-    redis:
-      host: 127.0.0.1
-      port: 6379
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  redis:
+    host: 127.0.0.1
+    port: 6379
