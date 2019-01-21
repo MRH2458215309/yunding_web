@@ -7,10 +7,8 @@
 package com.yundingshuyuan.website.controller;
 
 import com.yundingshuyuan.website.controller.support.BaseController;
-import com.yundingshuyuan.website.form.UserLoginByPhoneForm;
-import com.yundingshuyuan.website.form.UserLoginForm;
-import com.yundingshuyuan.website.form.UserPasswordForm;
-import com.yundingshuyuan.website.form.UserRegisterForm;
+import com.yundingshuyuan.website.form.*;
+import com.yundingshuyuan.website.service.UserInfoService;
 import com.yundingshuyuan.website.service.UserService;
 import com.yundingshuyuan.website.wrapper.ResultWrapper;
 import io.swagger.annotations.Api;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
@@ -32,6 +31,9 @@ import javax.validation.constraints.NotEmpty;
 public class UserController extends BaseController {
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserInfoService userInfoService;
 
     @ApiOperation("用户注册")
     @RequestMapping(value = "/register",method = RequestMethod.POST)
@@ -76,7 +78,7 @@ public class UserController extends BaseController {
         return ResultWrapper.success();
     }
 
-    @ApiOperation("忘记密码_修改")
+    @ApiOperation("密码_修改")
     @PostMapping("/updatePassword")
     public ResultWrapper updatePassword(UserPasswordForm passwordForm,BindingResult bindingResult){
         validateParams(bindingResult);
@@ -84,6 +86,16 @@ public class UserController extends BaseController {
         userService.updatePassword(passwordForm);
 
         return ResultWrapper.success("修改密码操作成功");
+    }
+
+    @ApiOperation("用户信息保存")
+    @PostMapping("/saveUserInfo")
+    public ResultWrapper saveUserInfo(HttpServletRequest request,@Valid InfoAddForm infoAddForm, BindingResult bindingResult){
+        validateParams(bindingResult);
+
+        userInfoService.saveUserInfo(request,infoAddForm);
+
+        return ResultWrapper.success("用户信息存储成功");
     }
 
 }

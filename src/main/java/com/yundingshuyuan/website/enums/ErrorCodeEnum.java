@@ -57,7 +57,12 @@ public enum ErrorCodeEnum {
     /**
      * 用户身份异常
      */
-    IDENTITY_ERROR(1009,"User身份错误");
+    IDENTITY_ERROR(1009,"User身份错误"),
+
+    /**
+     * 用户信息错误
+     */
+    USERINFO_ERROR(1010,"User信息错误");
 
 
 

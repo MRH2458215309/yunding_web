@@ -17,7 +17,7 @@ import com.yundingshuyuan.website.form.UserLoginByPhoneForm;
 import com.yundingshuyuan.website.form.UserLoginForm;
 import com.yundingshuyuan.website.form.UserPasswordForm;
 import com.yundingshuyuan.website.form.UserRegisterForm;
-import com.yundingshuyuan.website.repository.IdentityRepository;
+import com.yundingshuyuan.website.repository.UserIdentityRepository;
 import com.yundingshuyuan.website.repository.UserRepository;
 import com.yundingshuyuan.website.repository.redis.IRedisRepository;
 import com.yundingshuyuan.website.service.UserService;
@@ -25,7 +25,6 @@ import com.yundingshuyuan.website.utils.TokenUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
@@ -42,7 +41,7 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
     @Autowired
-    IdentityRepository identityRepository;
+    UserIdentityRepository userIdentityRepository;
 
     @Autowired
     private IRedisRepository redisRepository;
@@ -131,7 +130,7 @@ public class UserServiceImpl implements UserService {
         UserIdentity userIdentity = new UserIdentity();
         userIdentity.setId(user.getId());
         System.out.println(user.getId());
-        Optional<UserIdentity> userIdentityOptional =identityRepository.findById(user.getId());
+        Optional<UserIdentity> userIdentityOptional = userIdentityRepository.findById(user.getId());
         System.out.println(userIdentityOptional.isPresent());
 
         //没有身份
@@ -193,9 +192,9 @@ public class UserServiceImpl implements UserService {
          */
         UserIdentity userIdentity = new UserIdentity();
         userIdentity.setId(user.getId());
-        System.out.println(user.getId());
-        Optional<UserIdentity> userIdentityOptional =identityRepository.findById(user.getId());
-        System.out.println(userIdentityOptional.isPresent());
+        //System.out.println(user.getId());
+        Optional<UserIdentity> userIdentityOptional = userIdentityRepository.findById(user.getId());
+        //System.out.println(userIdentityOptional.isPresent());
 
         //没有身份
         if(!userIdentityOptional.isPresent()){
@@ -253,7 +252,7 @@ public class UserServiceImpl implements UserService {
         user.setUsername(username);
         Optional<User> userOptional = userRepository.findOne(Example.of(user));
         if(!userOptional.isPresent()){
-            throw new SysException(ErrorCodeEnum.USERNAME_ERROR);
+            throw new UserException(ErrorCodeEnum.USERNAME_ERROR);
         }
         /**
          * 用户有效,发送验证码
@@ -286,10 +285,10 @@ public class UserServiceImpl implements UserService {
         /*从缓存获取验证码*/
         String phone_code = jedis.get("PHONE_CODE");
         if(phone_code==null){
-            throw new SysException(ErrorCodeEnum.PARAM_ERROR);
+            throw new UserException(ErrorCodeEnum.PARAM_ERROR);
         } else {
            if(!phone_code.equals(phoneCode)){
-               throw new SysException(ErrorCodeEnum.PHONE_CODE_ERROR);
+               throw new UserException(ErrorCodeEnum.PHONE_CODE_ERROR);
            }
         }
 

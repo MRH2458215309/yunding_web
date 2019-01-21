@@ -7,32 +7,41 @@
 package com.yundingshuyuan.website.repository.redis.Impl;
 
 import com.yundingshuyuan.website.repository.redis.IRedisRepository;
+import com.yundingshuyuan.website.utils.redisUtils.RedisUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+
+import static com.yundingshuyuan.website.utils.redisUtils.RedisKeyTemplate.*;
+import static com.yundingshuyuan.website.utils.redisUtils.RedisUtils.buildKey;
 
 @Component
 public class RedisRepositoryImpl implements IRedisRepository {
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
     @Override
     public String findAccessTokenByUserId(String userId) {
-        return null;
+        return RedisUtils.get(redisTemplate,buildKey(T_USER_TOKEN,userId));
     }
 
     @Override
     public void deleteAccessToken(String accessToken) {
-
+        RedisUtils.del(redisTemplate,buildKey(T_ACCESS_TOKEN,accessToken));
     }
 
     @Override
     public void saveUserAccessToken(String userId, String accessToken) {
-
+        RedisUtils.set(redisTemplate,buildKey(T_USER_TOKEN,userId),accessToken);
     }
 
     @Override
     public void saveAccessToken(String userId, String accessToken) {
-
+        RedisUtils.set(redisTemplate,buildKey(T_ACCESS_TOKEN,accessToken),userId);
     }
 
     @Override
-    public String findUserByAccessToken(String accessToken) {
-        return null;
+    public String findUserIdByAccessToken(String accessToken) {
+        return RedisUtils.get(redisTemplate,buildKey(T_ACCESS_TOKEN,accessToken));
     }
 }

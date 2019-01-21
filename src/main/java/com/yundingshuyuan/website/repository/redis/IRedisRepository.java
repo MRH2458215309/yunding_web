@@ -33,6 +33,6 @@ public interface IRedisRepository {
      * @param accessToken
      * @return
      */
-    String findUserByAccessToken(String accessToken);
+    String findUserIdByAccessToken(String accessToken);
 
 }

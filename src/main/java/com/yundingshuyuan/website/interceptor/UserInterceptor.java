@@ -33,29 +33,26 @@ public class UserInterceptor implements HandlerInterceptor {
          */
         String accessToken = request.getHeader(SysConstant.HEADER_TOKEN);
         //未获取到token
-        if(null == accessToken){
+        if (null == accessToken) {
             accessToken = request.getParameter(SysConstant.TOKEN_REQUEST_PARAM);
         }
-        response.setHeader(SysConstant.HTTP_HEADER_CONTENT_TYPE,SysConstant.CONTENT_TYPE_APPLICATION_JSON);
+        response.setHeader(SysConstant.HTTP_HEADER_CONTENT_TYPE, SysConstant.CONTENT_TYPE_APPLICATION_JSON);
 
         ResultWrapper resultWrapper = null;
-        if(null == accessToken){
+        if (null == accessToken) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resultWrapper = ResultWrapper.failure(ErrorCodeEnum.ERROR_TOKEN);
             response.getWriter().println(JsonUtils.toJson(resultWrapper));
             return false;
         }
-
-        String userId = redisRepository.findUserByAccessToken(accessToken);
-
-        if(null == userId){
+        String userId = redisRepository.findUserIdByAccessToken(accessToken);
+        if (null == userId) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resultWrapper =ResultWrapper.failure(ErrorCodeEnum.ERROR_TOKEN);
+            resultWrapper = ResultWrapper.failure(ErrorCodeEnum.ERROR_TOKEN);
             response.getWriter().println(JsonUtils.toJson(resultWrapper));
+            return false;
         }
+        request.setAttribute("UserID",userId);
         return true;
     }
-
-
-
 }
