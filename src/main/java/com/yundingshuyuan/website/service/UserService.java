@@ -6,10 +6,22 @@
  */
 package com.yundingshuyuan.website.service;
 
+import com.yundingshuyuan.website.form.UserLoginForm;
 import com.yundingshuyuan.website.form.UserRegisterForm;
 
 import javax.servlet.http.HttpServletRequest;
 
 public interface UserService {
+    /**
+     * 用户注册
+     * @param userRegisterForm
+     */
     void registerUser(UserRegisterForm userRegisterForm);
+
+    /**
+     * 用户认证
+     * @param userLoginForm
+     * @return
+     */
+    String auth(UserLoginForm userLoginForm);
 }

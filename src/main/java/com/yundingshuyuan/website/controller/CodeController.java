@@ -14,6 +14,7 @@ import com.yundingshuyuan.website.utils.VerificationCode.*;
 import com.yundingshuyuan.website.utils.aliyunCode.CodeUtil;
 import com.yundingshuyuan.website.wrapper.ResultWrapper;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,7 @@ public class CodeController {
      * 获取图片验证码（Gif版本）
      * @param response
      */
+    @ApiOperation("获取图片验证码")
     @RequestMapping(value="getGifCode",method= RequestMethod.GET)
     public void getGifCode(HttpServletResponse response, HttpServletRequest request){
         try {
@@ -68,6 +70,7 @@ public class CodeController {
     /**
      * 手机验证提交
      */
+    @ApiOperation("获取手机验证码")
     @RequestMapping(value = "/getPhoneCode", method = RequestMethod.POST)
     @ResponseBody
     public ResultWrapper code(String username) {
