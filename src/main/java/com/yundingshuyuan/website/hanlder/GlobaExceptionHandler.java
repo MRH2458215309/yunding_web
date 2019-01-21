@@ -10,10 +10,13 @@ import com.yundingshuyuan.website.enums.ErrorCodeEnum;
 import com.yundingshuyuan.website.exception.SysException;
 import com.yundingshuyuan.website.wrapper.ResultWrapper;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
 public class GlobaExceptionHandler {
-
+    @ResponseBody
+    @ExceptionHandler(value = Exception.class)
     public ResultWrapper exception(Exception e){
         e.printStackTrace();
         /**

@@ -7,6 +7,7 @@
 package com.yundingshuyuan.website.controller;
 
 import com.yundingshuyuan.website.controller.support.BaseController;
+import com.yundingshuyuan.website.form.UserLoginByPhoneForm;
 import com.yundingshuyuan.website.form.UserLoginForm;
 import com.yundingshuyuan.website.form.UserRegisterForm;
 import com.yundingshuyuan.website.service.UserService;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 @Api(tags = "用户接口")
 @RequestMapping("/user")
@@ -45,13 +47,23 @@ public class UserController extends BaseController {
         return ResultWrapper.success();
     }
 
-    @ApiOperation("用户登录")
+    @ApiOperation("用户登录(账号登录)")
     @PostMapping("/login")
     public ResultWrapper<String> login(UserLoginForm userLoginForm,BindingResult bindingResult){
 
         validateParams(bindingResult);
 
         String accessToken = userService.auth(userLoginForm);
+
+        return ResultWrapper.success(accessToken);
+
+    }
+    @ApiOperation("用户登录(手机登录)")
+    @PostMapping("/loginByPhone")
+    public ResultWrapper<String> login(@Valid UserLoginByPhoneForm userLoginByPhoneForm, BindingResult bindingResult){
+        validateParams(bindingResult);
+
+        String accessToken = userService.auth(userLoginByPhoneForm);
 
         return ResultWrapper.success(accessToken);
 

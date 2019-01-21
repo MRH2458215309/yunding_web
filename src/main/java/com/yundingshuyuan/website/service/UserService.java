@@ -6,6 +6,7 @@
  */
 package com.yundingshuyuan.website.service;
 
+import com.yundingshuyuan.website.form.UserLoginByPhoneForm;
 import com.yundingshuyuan.website.form.UserLoginForm;
 import com.yundingshuyuan.website.form.UserRegisterForm;
 
@@ -24,4 +25,11 @@ public interface UserService {
      * @return
      */
     String auth(UserLoginForm userLoginForm);
+
+    /**
+     * 用户认证byPhone
+     * @param userLoginByPhoneForm
+     * @return
+     */
+    String auth(UserLoginByPhoneForm userLoginByPhoneForm);
 }

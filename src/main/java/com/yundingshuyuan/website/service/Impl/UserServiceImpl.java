@@ -11,6 +11,7 @@ import com.yundingshuyuan.website.enums.ErrorCodeEnum;
 import com.yundingshuyuan.website.enums.UserStateEnum;
 import com.yundingshuyuan.website.exception.SysException;
 import com.yundingshuyuan.website.exception.UserException;
+import com.yundingshuyuan.website.form.UserLoginByPhoneForm;
 import com.yundingshuyuan.website.form.UserLoginForm;
 import com.yundingshuyuan.website.form.UserRegisterForm;
 import com.yundingshuyuan.website.repository.UserRepository;
@@ -145,5 +146,27 @@ public class UserServiceImpl implements UserService {
         //保存token
         redisRepository.saveAccessToken(userId,accessToken);
         return accessToken;
+    }
+
+    @Override
+    public String auth(UserLoginByPhoneForm userLoginByPhoneForm) {
+        /**
+         * 第一步,查询用户信息
+         */
+        User user = new User();
+        user.setUsername(userLoginByPhoneForm.getUsername());
+        Optional<User> userOptional = userRepository.findOne(Example.of(user));
+
+        //用户名错误
+        if(!userOptional.isPresent()){
+            throw new UserException(ErrorCodeEnum.USERNAME_ERROR);
+        }
+        user = userOptional.get();
+
+        /**
+         * 第二步,判断验证码是否正确
+         */
+        return null;
+
     }
 }
