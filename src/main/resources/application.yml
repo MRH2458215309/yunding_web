@@ -8,8 +8,11 @@ spring:
     password: leeyf100%
     jpa:
       database: mysql
+      show-sql: true
       hibernate:
         ddl-auto: update
+        naming:
+          strategy: org.hibernate.dfg.ImprovedNamingStrategy
     redis:
       host: 127.0.0.1
       port: 6379

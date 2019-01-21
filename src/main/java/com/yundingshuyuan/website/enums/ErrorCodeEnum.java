@@ -29,6 +29,7 @@ public enum ErrorCodeEnum {
      *
      */
     PARAM_ERROR(1001,"参数错误");
+
     ErrorCodeEnum(Integer code,String message){
         this.code =code;
         this.message = message;
