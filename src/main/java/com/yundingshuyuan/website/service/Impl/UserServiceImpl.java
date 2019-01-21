@@ -6,14 +6,18 @@
  */
 package com.yundingshuyuan.website.service.Impl;
 
+import com.yundingshuyuan.website.controller.CodeController;
 import com.yundingshuyuan.website.entity.User;
+import com.yundingshuyuan.website.entity.UserIdentity;
 import com.yundingshuyuan.website.enums.ErrorCodeEnum;
 import com.yundingshuyuan.website.enums.UserStateEnum;
 import com.yundingshuyuan.website.exception.SysException;
 import com.yundingshuyuan.website.exception.UserException;
 import com.yundingshuyuan.website.form.UserLoginByPhoneForm;
 import com.yundingshuyuan.website.form.UserLoginForm;
+import com.yundingshuyuan.website.form.UserPasswordForm;
 import com.yundingshuyuan.website.form.UserRegisterForm;
+import com.yundingshuyuan.website.repository.IdentityRepository;
 import com.yundingshuyuan.website.repository.UserRepository;
 import com.yundingshuyuan.website.repository.redis.IRedisRepository;
 import com.yundingshuyuan.website.service.UserService;
@@ -38,6 +42,9 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
     @Autowired
+    IdentityRepository identityRepository;
+
+    @Autowired
     private IRedisRepository redisRepository;
     //连接redis
     Jedis jedis = new Jedis("localhost");
@@ -56,6 +63,8 @@ public class UserServiceImpl implements UserService {
         if (ver_code != null) {
             if (!ver_code.equals(verCode)) {
                 throw new UserException(ErrorCodeEnum.CODE_ERROR);
+            }else {
+                jedis.del("VER_CODE");
             }
         } else {
             throw new SysException(ErrorCodeEnum.PARAM_ERROR);
@@ -70,6 +79,8 @@ public class UserServiceImpl implements UserService {
         if (phone_code != null) {
             if (!phone_code.equals(phoneCode)) {
                 throw new UserException(ErrorCodeEnum.PHONE_CODE_ERROR);
+            }else {
+                jedis.del("PHONE_CODE");
             }
         }else {
             throw new SysException(ErrorCodeEnum.PARAM_ERROR);
@@ -115,7 +126,21 @@ public class UserServiceImpl implements UserService {
         user = userOptional.get();
 
         /**
-         * 第二步,判断密码是否正确
+         * 第二步,验证身份
+         */
+        UserIdentity userIdentity = new UserIdentity();
+        userIdentity.setId(user.getId());
+        System.out.println(user.getId());
+        Optional<UserIdentity> userIdentityOptional =identityRepository.findById(user.getId());
+        System.out.println(userIdentityOptional.isPresent());
+
+        //没有身份
+        if(!userIdentityOptional.isPresent()){
+            throw new UserException(ErrorCodeEnum.IDENTITY_ERROR);
+        }
+
+        /**
+         * 第三步,判断密码是否正确
          */
         //密码错误
         if(!user.getPassword().equals(userLoginForm.getPassword())){
@@ -123,12 +148,12 @@ public class UserServiceImpl implements UserService {
         }
 
         /**
-         * 第三步,生成accessToken
+         * 第四步,生成accessToken
          */
         String accessToken = TokenUtils.genToken();
 
         /**
-         * 第四步,获取旧token
+         * 第五步,获取旧token
          */
         //获取userId
         String userId = user.getId();
@@ -164,9 +189,115 @@ public class UserServiceImpl implements UserService {
         user = userOptional.get();
 
         /**
-         * 第二步,判断验证码是否正确
+         * 第二步,验证身份
          */
-        return null;
+        UserIdentity userIdentity = new UserIdentity();
+        userIdentity.setId(user.getId());
+        System.out.println(user.getId());
+        Optional<UserIdentity> userIdentityOptional =identityRepository.findById(user.getId());
+        System.out.println(userIdentityOptional.isPresent());
 
+        //没有身份
+        if(!userIdentityOptional.isPresent()){
+            throw new UserException(ErrorCodeEnum.IDENTITY_ERROR);
+        }
+
+        /**
+         * 第三步,验证手机验证码
+         */
+        String phoneCode = userLoginByPhoneForm.getPhoneCode();
+        /*从缓存获取*/
+        String phone_code = jedis.get("PHONE_CODE");
+        //获取手机验证码成功
+        if (null != phone_code) {
+            if (!phone_code.equals(phoneCode)) {
+                throw new UserException(ErrorCodeEnum.PHONE_CODE_ERROR);
+            }
+        }else {
+            throw new SysException(ErrorCodeEnum.PARAM_ERROR);
+        }
+
+        /**
+         * 第四步,生成accessToken
+         */
+        String accessToken = TokenUtils.genToken();
+
+        /**
+         * 第五步,获取旧token
+         */
+        //获取userId
+        String userId = user.getId();
+        String userAccessTokenKey = "USER_TOKEN:"+ userId;
+
+        String oldToken = redisRepository.findAccessTokenByUserId(userId);
+
+        if(oldToken!=null){
+            //TODO 消息提醒当前账号异地登录
+            //删除旧token
+            redisRepository.deleteAccessToken(oldToken);
+        }
+        //保存id与token的关系
+        redisRepository.saveUserAccessToken(userId,accessToken);
+        //保存token
+        redisRepository.saveAccessToken(userId,accessToken);
+        return accessToken;
+
+    }
+
+    @Override
+    public void checkUsername(String username) {
+        /**
+         * 验证用户是否存在
+         */
+        User user = new User();
+        user.setUsername(username);
+        Optional<User> userOptional = userRepository.findOne(Example.of(user));
+        if(!userOptional.isPresent()){
+            throw new SysException(ErrorCodeEnum.USERNAME_ERROR);
+        }
+        /**
+         * 用户有效,发送验证码
+         */
+        else {
+            CodeController codeController = new CodeController();
+            codeController.code(username);
+        }
+    }
+
+    @Override
+    public void updatePassword(UserPasswordForm passwordForm) {
+        /**
+         * 查询用户信息
+         */
+        User user = new User();
+        user.setUsername(passwordForm.getUsername());
+        Optional<User> userOptional = userRepository.findOne(Example.of(user));
+
+        //用户名错误
+        if(!userOptional.isPresent()){
+            throw new UserException(ErrorCodeEnum.USERNAME_ERROR);
+        }
+        user = userOptional.get();
+
+        /**
+         * 手机验证码校验
+         */
+        String phoneCode = passwordForm.getPhoneCode();
+        /*从缓存获取验证码*/
+        String phone_code = jedis.get("PHONE_CODE");
+        if(phone_code==null){
+            throw new SysException(ErrorCodeEnum.PARAM_ERROR);
+        } else {
+           if(!phone_code.equals(phoneCode)){
+               throw new SysException(ErrorCodeEnum.PHONE_CODE_ERROR);
+           }
+        }
+
+        /**
+         * 修改密码
+         */
+        BeanUtils.copyProperties(passwordForm,user);
+        user.setUpdatedAt(new Date());
+        userRepository.save(user);
     }
 }

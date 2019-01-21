@@ -9,6 +9,7 @@ package com.yundingshuyuan.website.controller;
 import com.yundingshuyuan.website.controller.support.BaseController;
 import com.yundingshuyuan.website.form.UserLoginByPhoneForm;
 import com.yundingshuyuan.website.form.UserLoginForm;
+import com.yundingshuyuan.website.form.UserPasswordForm;
 import com.yundingshuyuan.website.form.UserRegisterForm;
 import com.yundingshuyuan.website.service.UserService;
 import com.yundingshuyuan.website.wrapper.ResultWrapper;
@@ -17,10 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -58,6 +56,7 @@ public class UserController extends BaseController {
         return ResultWrapper.success(accessToken);
 
     }
+
     @ApiOperation("用户登录(手机登录)")
     @PostMapping("/loginByPhone")
     public ResultWrapper<String> login(@Valid UserLoginByPhoneForm userLoginByPhoneForm, BindingResult bindingResult){
@@ -68,6 +67,23 @@ public class UserController extends BaseController {
         return ResultWrapper.success(accessToken);
 
     }
+    @ApiOperation("忘记密码_验证")
+    @GetMapping("/checkUsername")
+    public ResultWrapper checkUsername(String username){
 
+        userService.checkUsername(username);
+
+        return ResultWrapper.success();
+    }
+
+    @ApiOperation("忘记密码_修改")
+    @PostMapping("/updatePassword")
+    public ResultWrapper updatePassword(UserPasswordForm passwordForm,BindingResult bindingResult){
+        validateParams(bindingResult);
+
+        userService.updatePassword(passwordForm);
+
+        return ResultWrapper.success("修改密码操作成功");
+    }
 
 }

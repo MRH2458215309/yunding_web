@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import static com.yundingshuyuan.website.utils.aliyunCode.Code.sendSms;
-@Api("验证码接口")
+@Api(tags = "验证码接口")
 @RestController
 @RequestMapping(value = "/code")
 @Slf4j
@@ -79,6 +79,7 @@ public class CodeController {
         if (!isphone) {
             return ResultWrapper.failure("手机号格式错误");
         } else {
+            //生成验证码
             String smsCode = CodeUtil.smsCode();
             String getreturn;
             try {

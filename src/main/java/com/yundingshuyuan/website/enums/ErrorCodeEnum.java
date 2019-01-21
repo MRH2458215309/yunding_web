@@ -53,7 +53,11 @@ public enum ErrorCodeEnum {
     /**
      * JSON转化错误
      */
-    JSON_TRANS_ERROR(1008,"JSON转化错误");
+    JSON_TRANS_ERROR(1008,"JSON转化错误"),
+    /**
+     * 用户身份异常
+     */
+    IDENTITY_ERROR(1009,"User身份错误");
 
 
 
