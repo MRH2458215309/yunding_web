@@ -27,41 +27,61 @@ public class UserInfo {
     /**
      * 真实姓名
      */
+    @Column(name = "real_name")
     private String realName;
 
     /**
      * 性别
      */
+    @Column(name = "sex")
     private String sex;
 
     /**
      * 入学年份
      */
+    @Column(name = "series")
     private String series;
 
     /**
      * 方向
      */
+    @Column(name = "direction")
     private String direction;
 
     /**
      * 生日
      */
+    @Column(name = "birthday")
     private String birthday;
 
     /**
      * 学院
      */
+    @Column(name = "academy")
     private String academy;
 
     /**
      * 专业
      */
+    @Column(name = "major")
     private String major;
+
+    /**
+     * 班级
+     */
+    @Column(name = "class")
+    private String classroom;
+
+    /**
+     * 籍贯
+     */
+    @Column(name = "native_place")
+    private String nativePlace;
 
     /**
      * 楼号
      */
+    @Column(name = "dormitory")
     private Integer dormitory;
 
     /**
@@ -77,6 +97,7 @@ public class UserInfo {
     /**
      * 签名
      */
+    @Column(name = "signature")
     private String signature;
 
     /**
