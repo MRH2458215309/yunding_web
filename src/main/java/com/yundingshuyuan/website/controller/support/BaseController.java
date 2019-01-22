@@ -24,6 +24,15 @@ public class BaseController {
         }
     }
 
+
+    /**
+     * @author Mr.h
+     * @param sourceList
+     * @param targetClass
+     * @param <S>
+     * @param <T>
+     * @return
+     */
     protected <S, T> List<T> toVOList(List<S> sourceList, Class<T> targetClass) {
 
         return sourceList.stream()
