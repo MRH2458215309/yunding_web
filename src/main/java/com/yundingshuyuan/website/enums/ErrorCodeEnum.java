@@ -62,8 +62,14 @@ public enum ErrorCodeEnum {
     /**
      * 用户信息错误
      */
-    USERINFO_ERROR(1010,"User信息错误");
+    USERINFO_ERROR(1010,"User信息错误"),
 
+    /**
+     * 文件上传错误
+     */
+    FILE_ERROR(1011,"文件上传错误")
+
+    ;
 
 
     ErrorCodeEnum(Integer code, String message){

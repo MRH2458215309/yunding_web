@@ -12,11 +12,11 @@ import lombok.Data;
 
 @Data
 public class ResultWrapper<T> {
-    private final static Integer SUCCESS_CODE = 0;
+    private final static Integer SUCCESS_CODE = 200;
 
     private final static String SUCCESS_MESSAGE = "操作成功";
 
-    private final static Integer FAILURE_CODE = -1;
+    private final static Integer FAILURE_CODE = 500;
 
     private final static String FAILURE_MESSAGE = "操作失败";
 

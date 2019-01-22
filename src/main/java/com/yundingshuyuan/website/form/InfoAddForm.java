@@ -8,15 +8,15 @@ package com.yundingshuyuan.website.form;
 
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotEmpty;
 
+/**
+ * @author leeyf
+ */
 @Data
 public class InfoAddForm {
 
-    @Column(name = "real_name")
     @NotEmpty
-
     private String realName;
 
     private String sex;
@@ -25,19 +25,19 @@ public class InfoAddForm {
 
     private String direction;
 
+    private String birthday;
+
     private String academy;
 
     private String major;
 
-    @Column(name = "class")
     private String classroom;
 
-    @Column(name = "native_place")
     private String nativePlace;
 
-    private String dormitory;
+    private Integer dormitory;
 
-    private String room;
+    private Integer room;
 
     private String signature;
 }

@@ -295,7 +295,7 @@ public class UserServiceImpl implements UserService {
         /**
          * 修改密码
          */
-        BeanUtils.copyProperties(passwordForm,user);
+        BeanUtils.copyProperties(user,passwordForm);
         user.setUpdatedAt(new Date());
         userRepository.save(user);
     }

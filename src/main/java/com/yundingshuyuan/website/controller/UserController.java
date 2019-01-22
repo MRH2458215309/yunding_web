@@ -6,10 +6,15 @@
  */
 package com.yundingshuyuan.website.controller;
 
+import com.yundingshuyuan.website.constant.UserConstant;
 import com.yundingshuyuan.website.controller.support.BaseController;
+import com.yundingshuyuan.website.enums.ErrorCodeEnum;
+import com.yundingshuyuan.website.exception.SysException;
 import com.yundingshuyuan.website.form.*;
 import com.yundingshuyuan.website.service.UserInfoService;
 import com.yundingshuyuan.website.service.UserService;
+import com.yundingshuyuan.website.utils.FileUtils;
+import com.yundingshuyuan.website.vo.UserInfoVO;
 import com.yundingshuyuan.website.wrapper.ResultWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,11 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.io.IOException;
+import java.util.Optional;
 
 @Api(tags = "用户接口")
 @RequestMapping("/user")
@@ -90,12 +99,29 @@ public class UserController extends BaseController {
 
     @ApiOperation("用户信息保存")
     @PostMapping("/saveUserInfo")
-    public ResultWrapper saveUserInfo(HttpServletRequest request,@Valid InfoAddForm infoAddForm, BindingResult bindingResult){
+    @Transactional
+    public ResultWrapper saveUserInfo(@Valid InfoAddForm infoAddForm,
+                                      MultipartFile image,
+                                      HttpServletRequest request,
+                                      BindingResult bindingResult){
         validateParams(bindingResult);
 
-        userInfoService.saveUserInfo(request,infoAddForm);
+        try {
+            ResultWrapper imagePath = FileUtils.saveImage(request,image, UserConstant.ImageRealPath);
 
+            userInfoService.saveUserInfo(request,infoAddForm,imagePath.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw  new SysException(ErrorCodeEnum.FILE_ERROR);
+        }
         return ResultWrapper.success("用户信息存储成功");
     }
 
+    @ApiOperation("个人主页信息获取")
+    @GetMapping("/homePage/getUserInfo")
+    public ResultWrapper<UserInfoVO> findInfo(HttpServletRequest request){
+
+        UserInfoVO userInfoVO = userInfoService.findInfo(request);
+        return ResultWrapper.successWithData(userInfoVO);
+    }
 }

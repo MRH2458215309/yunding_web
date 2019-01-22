@@ -88,6 +88,13 @@
             <artifactId>springfox-spring-web</artifactId>
             <version>2.9.2</version>
         </dependency>
+
+        <!--强大工具类-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>4.4.0</version>
+        </dependency>
     </dependencies>
 
     <build>

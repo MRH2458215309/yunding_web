@@ -46,7 +46,7 @@ public class UserInfo {
      * 方向
      */
     @Column(name = "direction")
-    private String direction;
+    private Integer direction;
 
     /**
      * 生日

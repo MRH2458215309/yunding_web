@@ -14,4 +14,6 @@ public class SysConstant {
     public static final String HTTP_HEADER_CONTENT_TYPE = "Content_Type";
 
     public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json;charset=UTF-8";
+
+
 }

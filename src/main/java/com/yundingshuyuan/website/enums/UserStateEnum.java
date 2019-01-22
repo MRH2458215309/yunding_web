@@ -10,10 +10,14 @@ import lombok.Getter;
 
 @Getter
 public enum UserStateEnum {
+    /**
+     * 正常
+     */
     NOMAL(0,"正常"),
-
+    /**
+     * 封号
+     */
     DISABLED(-1,"封号")
-
 
 ;
     UserStateEnum(Integer status, String desc) {
@@ -21,7 +25,12 @@ public enum UserStateEnum {
         this.desc = desc;
     }
 
+    /**
+     * 账号状态
+     */
     private Integer status;
-
+    /**
+     * 描述
+     */
     private String desc;
 }

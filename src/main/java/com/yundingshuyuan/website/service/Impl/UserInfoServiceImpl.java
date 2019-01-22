@@ -6,18 +6,25 @@
  */
 package com.yundingshuyuan.website.service.Impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
+import com.yundingshuyuan.website.constant.UserConstant;
+import com.yundingshuyuan.website.entity.UserIdentity;
 import com.yundingshuyuan.website.entity.UserInfo;
 import com.yundingshuyuan.website.enums.ErrorCodeEnum;
+import com.yundingshuyuan.website.enums.UserIdentityEnum;
 import com.yundingshuyuan.website.exception.UserException;
 import com.yundingshuyuan.website.form.InfoAddForm;
+import com.yundingshuyuan.website.repository.UserIdentityRepository;
 import com.yundingshuyuan.website.repository.UserInfoRepository;
 import com.yundingshuyuan.website.service.UserInfoService;
-import org.apache.coyote.Request;
-import org.springframework.beans.BeanUtils;
+
+import com.yundingshuyuan.website.vo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -29,17 +36,73 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     UserInfoRepository userInfoRepository;
 
-    @Override
-    public void saveUserInfo(HttpServletRequest request,InfoAddForm infoAddForm) {
-        //获得当前userId
-        String userId= (String) request.getAttribute("UserID");
-        UserInfo userInfo =new UserInfo();
+    @Autowired
+    UserIdentityRepository userIdentityRepository;
 
-        BeanUtils.copyProperties(userInfo,infoAddForm);
+    @Override
+    public void saveUserInfo(HttpServletRequest request, InfoAddForm infoAddForm, String imagePath) {
+        //获得当前userId
+        String userId = (String) request.getAttribute("UserID");
+        UserInfo userInfo = new UserInfo();
         userInfo.setId(userId);
-        System.out.println(infoAddForm.toString());
-        System.out.println(userInfo.toString());
+        /**
+         * 从数据库查询已知信息
+         */
+        Optional<UserInfo> userInfoOptional = userInfoRepository.findById(userId);
+        if(userInfoOptional.isPresent()) {
+            userInfo = userInfoOptional.get();
+        }
+        System.out.println(userInfo.toString()+"-------------1");
+        //hutool工具类  只将不为空的值赋值
+        BeanUtil.copyProperties(infoAddForm,userInfo,
+                CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
+        /*UserInfo(id=ff808181686a77c701686a77f07f0000, realName=李亚飞, sex=1, series=2017, direction=03, birthday=null, academy=软件学院, major=软件工程, classroom=1711, nativePlace=晋中, dormitory=null, room=null, image=null, signature=222222222222, createdAt=null, updatedAt=null)*/
+        System.out.println(userInfo.toString()+"--------------2");
+        //如果创建时间为空,则添加创建时间
+        if (null == userInfo.getCreatedAt()) {
+            userInfo.setCreatedAt(new Date());
+        }
+        userInfo.setUpdatedAt(new Date());
+        //如果图片为空,则使用默认图片
+        if (null == imagePath) {
+            userInfo.setImage(UserConstant.IMAGE_URL);
+        } else {
+            userInfo.setImage(imagePath);
+        }
+
+        userInfoRepository.save(userInfo);
 
 
     }
+
+    @Override
+    public UserInfoVO findInfo(HttpServletRequest request) {
+        /**
+         * 当前登录账号id获取
+         */
+        String userID = (String) request.getAttribute("UserID");
+        /**
+         * 根据id获取信息
+         */
+        Optional<UserInfo> userInfoOptional = userInfoRepository.findById(userID);
+        if(!userInfoOptional.isPresent()){
+            throw new UserException(ErrorCodeEnum.USERINFO_ERROR);
+        }
+        UserInfoVO userInfoVO =new UserInfoVO();
+        BeanUtil.copyProperties(userInfoOptional.get(),userInfoVO);
+        /**
+         * 根据id获取身份
+         */
+        Optional<UserIdentity> userIdentityOptional = userIdentityRepository.findById(userID);
+        if(!userIdentityOptional.isPresent()){
+            throw new UserException(ErrorCodeEnum.IDENTITY_ERROR);
+        }
+        userInfoVO.setIdentity(identity(userIdentityOptional.get().getDetail()));
+        return userInfoVO;
+    }
+
+        String identity(Integer integer){
+        /*身份：1：学员；2：工程师；3：极客；4：创客；5：云顶院；*/
+        return UserIdentityEnum.valueOf("IDENTITY_"+integer).getDesc();
+        }
 }
