@@ -12,6 +12,7 @@ import com.yundingshuyuan.website.constant.UserConstant;
 import com.yundingshuyuan.website.entity.UserIdentity;
 import com.yundingshuyuan.website.entity.UserInfo;
 import com.yundingshuyuan.website.enums.ErrorCodeEnum;
+import com.yundingshuyuan.website.enums.UserDirectionEnum;
 import com.yundingshuyuan.website.enums.UserIdentityEnum;
 import com.yundingshuyuan.website.exception.UserException;
 import com.yundingshuyuan.website.form.InfoAddForm;
@@ -19,7 +20,7 @@ import com.yundingshuyuan.website.repository.UserIdentityRepository;
 import com.yundingshuyuan.website.repository.UserInfoRepository;
 import com.yundingshuyuan.website.service.UserInfoService;
 
-import com.yundingshuyuan.website.vo.UserInfoVO;
+import com.yundingshuyuan.website.vo.UserInfoMyselfVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +77,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public UserInfoVO findInfo(HttpServletRequest request) {
+    public UserInfoMyselfVO findInfo(HttpServletRequest request) {
         /**
          * 当前登录账号id获取
          */
@@ -88,8 +89,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(!userInfoOptional.isPresent()){
             throw new UserException(ErrorCodeEnum.USERINFO_ERROR);
         }
-        UserInfoVO userInfoVO =new UserInfoVO();
-        BeanUtil.copyProperties(userInfoOptional.get(),userInfoVO);
+        UserInfoMyselfVO userInfoMyselfVO =new UserInfoMyselfVO();
+        BeanUtil.copyProperties(userInfoOptional.get(), userInfoMyselfVO);
         /**
          * 根据id获取身份
          */
@@ -97,12 +98,19 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(!userIdentityOptional.isPresent()){
             throw new UserException(ErrorCodeEnum.IDENTITY_ERROR);
         }
-        userInfoVO.setIdentity(identity(userIdentityOptional.get().getDetail()));
-        return userInfoVO;
+        /*将身份status转化成对应文字*/
+        userInfoMyselfVO.setIdentity(identity(userIdentityOptional.get().getDetail()));
+        /*将方向status转化成对应文字*/
+        userInfoMyselfVO.setDirection(direction(userInfoOptional.get().getDirection()));
+        return userInfoMyselfVO;
     }
 
         String identity(Integer integer){
         /*身份：1：学员；2：工程师；3：极客；4：创客；5：云顶院；*/
-        return UserIdentityEnum.valueOf("IDENTITY_"+integer).getDesc();
+            return UserIdentityEnum.valueOf("IDENTITY_"+integer).getDesc();
+        }
+        String direction(Integer integer){
+        /*方向 01设计 02秘书处 03前端 04Java 05Python 06Node.js 07云顶机电团队*/
+            return UserDirectionEnum.valueOf("DIRECTION_ENUM"+integer).getDesc();
         }
 }

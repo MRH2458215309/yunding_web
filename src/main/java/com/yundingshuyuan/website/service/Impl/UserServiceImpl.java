@@ -28,6 +28,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.Optional;
@@ -298,5 +299,23 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(user,passwordForm);
         user.setUpdatedAt(new Date());
         userRepository.save(user);
+    }
+
+    @Override
+    public void logout(HttpServletRequest request) {
+        /**
+         * 获取当前登录id
+         */
+        String userID = (String) request.getAttribute("UserID");
+
+        /**
+         * 获取当前token
+         */
+        String accessTokenByUserId= redisRepository.findAccessTokenByUserId(userID);
+
+        /**
+         * 删除当前token
+         */
+        redisRepository.deleteAccessToken(accessTokenByUserId);
     }
 }

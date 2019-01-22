@@ -1,5 +1,5 @@
 /**
- * FileName:UserInfoVO
+ * FileName:UserInfoMyselfVO
  * Author:leeyf
  * Date:19-1-22 上午11:42
  * Description:个人主页个人信息VO
@@ -9,7 +9,7 @@ package com.yundingshuyuan.website.vo;
 import lombok.Data;
 
 @Data
-public class UserInfoVO {
+public class UserInfoMyselfVO {
     /**
      * 姓名
      */

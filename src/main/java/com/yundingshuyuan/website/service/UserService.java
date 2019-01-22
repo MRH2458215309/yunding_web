@@ -45,4 +45,10 @@ public interface UserService {
      * @param passwordForm
      */
     void updatePassword(UserPasswordForm passwordForm);
+
+    /**
+     * 用户注销
+     * @param request
+     */
+    void logout(HttpServletRequest request);
 }

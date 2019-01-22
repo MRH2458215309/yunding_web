@@ -33,6 +33,4 @@ public enum  UserIdentityEnum {
      * 描述
      */
     private String desc;
-
-
 }

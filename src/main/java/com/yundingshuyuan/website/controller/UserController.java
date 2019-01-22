@@ -14,24 +14,22 @@ import com.yundingshuyuan.website.form.*;
 import com.yundingshuyuan.website.service.UserInfoService;
 import com.yundingshuyuan.website.service.UserService;
 import com.yundingshuyuan.website.utils.FileUtils;
-import com.yundingshuyuan.website.vo.UserInfoVO;
+import com.yundingshuyuan.website.vo.UserInfoMyselfVO;
 import com.yundingshuyuan.website.wrapper.ResultWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
-import java.util.Optional;
 
 @Api(tags = "用户接口")
 @RequestMapping("/user")
@@ -78,6 +76,7 @@ public class UserController extends BaseController {
         return ResultWrapper.success(accessToken);
 
     }
+
     @ApiOperation("忘记密码_验证")
     @GetMapping("/checkUsername")
     public ResultWrapper checkUsername(String username){
@@ -95,6 +94,15 @@ public class UserController extends BaseController {
         userService.updatePassword(passwordForm);
 
         return ResultWrapper.success("修改密码操作成功");
+    }
+
+    @ApiOperation("用户注销")
+    @GetMapping("/logout")
+    public ResultWrapper logout(HttpServletRequest request){
+
+        userService.logout(request);
+
+        return ResultWrapper.success("注销成功");
     }
 
     @ApiOperation("用户信息保存")
@@ -119,9 +127,11 @@ public class UserController extends BaseController {
 
     @ApiOperation("个人主页信息获取")
     @GetMapping("/homePage/getUserInfo")
-    public ResultWrapper<UserInfoVO> findInfo(HttpServletRequest request){
+    public ResultWrapper<UserInfoMyselfVO> findInfo(HttpServletRequest request){
 
-        UserInfoVO userInfoVO = userInfoService.findInfo(request);
-        return ResultWrapper.successWithData(userInfoVO);
+        UserInfoMyselfVO userInfoMyselfVO = userInfoService.findInfo(request);
+
+        return ResultWrapper.successWithData(userInfoMyselfVO);
     }
+
 }
