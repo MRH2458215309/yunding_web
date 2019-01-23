@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class AssignmentController extends BaseController {
 
     @ApiOperation("首页习作展示")
     @PostMapping("/Assignment/status")
-    public ResultWrapper selectAssignment(Assignment assignment, BindingResult bindingResult){
+    public ResultWrapper selectAssignment(@Valid Assignment assignment, BindingResult bindingResult){
         validateParams(bindingResult);
 
         List<Assignment> assignments = assignmentService.selectAssignment(assignment);

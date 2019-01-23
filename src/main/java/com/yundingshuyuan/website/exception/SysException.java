@@ -6,6 +6,7 @@
  */
 package com.yundingshuyuan.website.exception;
 
+import com.yundingshuyuan.website.enums.ArticleCodeEnum;
 import com.yundingshuyuan.website.enums.ErrorCodeEnum;
 import lombok.Data;
 
@@ -25,5 +26,10 @@ public class SysException extends RuntimeException {
 
     public SysException(){
 
+    }
+
+    public SysException(ArticleCodeEnum articleNone) {
+        super(articleNone.getMessage());
+        this.code = articleNone.getCode();
     }
 }

@@ -1,6 +1,7 @@
 package com.yundingshuyuan.website.service.Impl;
 
 import com.yundingshuyuan.website.entity.Article;
+import com.yundingshuyuan.website.enums.ArticleCodeEnum;
 import com.yundingshuyuan.website.enums.ErrorCodeEnum;
 import com.yundingshuyuan.website.exception.SysException;
 import com.yundingshuyuan.website.repository.ArticleRepository;
@@ -18,6 +19,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -80,6 +82,33 @@ public class ArticleServiceImpl extends BaseServiceImpl<Article, Integer> implem
             }
         },pageable);
         return articles;
+    }
+
+    /**
+     * 文章上传
+     * @param article
+     * @return
+     */
+    @Override
+    public void articleInsert(Article article, String realPath) {
+
+        Article article1 = new Article();
+        article1.setTitle(article.getTitle());
+        article1.setContent(article.getContent());
+        article1.setLabel(article.getLabel());
+        article1.setImage(realPath);
+        article1.setBrowseNumber(0);
+        article1.setLikeNumber(0);
+        article1.setCommentNumber(0);
+        article1.setCreatedAt(new Date());
+        article1.setUpdatedAt(new Date());
+
+        if (article1 == null) {
+            throw new SysException(ArticleCodeEnum.ARTICLE_NONE);
+        }
+
+        articleRepository.save(article1);
+
     }
 
 

@@ -1,8 +1,11 @@
 package com.yundingshuyuan.website.controller;
 
+import com.yundingshuyuan.website.constant.UserConstant;
 import com.yundingshuyuan.website.controller.support.BaseController;
 import com.yundingshuyuan.website.entity.Article;
+import com.yundingshuyuan.website.exception.SysException;
 import com.yundingshuyuan.website.service.ArticleService;
+import com.yundingshuyuan.website.utils.FileUtils;
 import com.yundingshuyuan.website.vo.PageVO;
 import com.yundingshuyuan.website.vo.SimpleArticleVO;
 import com.yundingshuyuan.website.wrapper.ResultWrapper;
@@ -13,10 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -103,5 +110,44 @@ public class ArticleController extends BaseController {
     }
 
 
+    /**
+     * 文章上传
+     * @param article
+     * @param bindingResult
+     * @return
+     */
+    @ApiOperation("文章上传")
+    @PostMapping("/upload")
+    public ResultWrapper articleInsert(@Valid Article article, BindingResult bindingResult,
+                                       MultipartFile image,
+                                       HttpServletRequest request) {
+
+        try {
+            if (image == null || article.getLabel() == null ||
+                    article.getContent() == null || article.getTitle() == null){
+                return ResultWrapper.failure("上传文章信息不能为空！");
+
+            } else {
+                /**
+                 * 保存图片
+                 */
+                ResultWrapper resultWrapper= FileUtils.saveImage(request, image, UserConstant.ARTICLE_IMAGE_REAL_PATH);
+
+                //真实路径
+                String realPath = resultWrapper.getMessage();
+
+                articleService.articleInsert(article,realPath);
+
+                return ResultWrapper.success();
+
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResultWrapper.failure("上传信息失败！");
+        }
+
+
+    }
 
 }

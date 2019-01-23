@@ -2,7 +2,9 @@ package com.yundingshuyuan.website.service;
 
 import com.yundingshuyuan.website.entity.Article;
 import com.yundingshuyuan.website.service.support.IBaseService;
+import com.yundingshuyuan.website.wrapper.ResultWrapper;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,4 +32,12 @@ public interface ArticleService extends IBaseService<Article,Integer> {
      * @return
      */
     Page<Article> selectArticle3(Article article, int pageNo, int pageSize);
+
+
+    /**
+     * 文章上传
+     * @param article
+     * @return
+     */
+    void articleInsert(Article article, String realPath);
 }
