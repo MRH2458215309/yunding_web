@@ -38,7 +38,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/user/checkUsername",
                         "/user/updatePassword",
                         "/code/**",
-                        "/select/upload"
+                        "/select/upload",
+                        "/select/delete",
+                        "/select/update"
 
                 );
     }

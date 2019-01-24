@@ -55,4 +55,10 @@ public interface ArticleService extends IBaseService<Article,Integer> {
      * @param realPath
      */
     void articleUpdateWithImage(Article article, String realPath);
+
+    /**
+     * 文章删除
+     * @param article
+     */
+    void updateLabel(Article article);
 }

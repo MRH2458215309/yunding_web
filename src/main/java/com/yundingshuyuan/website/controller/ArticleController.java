@@ -165,28 +165,51 @@ public class ArticleController extends BaseController {
                                        MultipartFile imageFile,
                                        HttpServletRequest request){
         try{
-            if (imageFile == null){
-                articleService.articleUpdate(article);
-                return ResultWrapper.success();
+            if (article.getLabel() < 0 || article.getLabel() > 9){
 
+                if (imageFile == null){
+                    articleService.articleUpdate(article);
+                    return ResultWrapper.success();
+
+                } else {
+                    /**
+                     * 保存图片
+                     */
+                    ResultWrapper resultWrapper= FileUtils.saveImage(request, imageFile, ArticleConstant.ARTICLE_IMAGE_REAL_PATH);
+
+                    //真实路径
+                    String realPath = resultWrapper.getMessage();
+
+                    articleService.articleUpdateWithImage(article,realPath);
+
+                    return ResultWrapper.success();
+                }
             } else {
-                /**
-                 * 保存图片
-                 */
-                ResultWrapper resultWrapper= FileUtils.saveImage(request, imageFile, ArticleConstant.ARTICLE_IMAGE_REAL_PATH);
-
-                //真实路径
-                String realPath = resultWrapper.getMessage();
-
-                articleService.articleUpdateWithImage(article,realPath);
-
-                return ResultWrapper.success();
+                return ResultWrapper.failure("标签范围为1～9！");
             }
+
         } catch (Exception e){
             e.printStackTrace();
             return ResultWrapper.failure("更新文章失败！");
         }
 
+    }
+
+
+    /**
+     * 删除文章
+     * @param article
+     * @param bindingResult
+     * @return
+     */
+    @ApiOperation("文章删除")
+    @PostMapping("/delete")
+    public ResultWrapper deleteArticle(@Valid Article article, BindingResult bindingResult){
+        validateParams(bindingResult);
+
+        articleService.updateLabel(article);
+
+        return ResultWrapper.success("删除成功！");
     }
 
 }

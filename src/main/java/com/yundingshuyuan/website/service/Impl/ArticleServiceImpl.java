@@ -94,6 +94,7 @@ public class ArticleServiceImpl extends BaseServiceImpl<Article, Integer> implem
     @Override
     public void articleInsert(Article article, String realPath) {
 
+
         Article article1 = new Article();
         article1.setTitle(article.getTitle());
         article1.setContent(article.getContent());
@@ -110,6 +111,8 @@ public class ArticleServiceImpl extends BaseServiceImpl<Article, Integer> implem
         }
 
         articleRepository.save(article1);
+
+
 
     }
 
@@ -133,7 +136,6 @@ public class ArticleServiceImpl extends BaseServiceImpl<Article, Integer> implem
             throw new SysException(ArticleCodeEnum.ARTICLE_NONE);
         }
 
-        articleRepository.update(article1);
 
     }
 
@@ -145,18 +147,42 @@ public class ArticleServiceImpl extends BaseServiceImpl<Article, Integer> implem
     @Override
     public void articleUpdateWithImage(Article article, String realPath) {
 
+        if (article.getLabel() < 0 || article.getLabel() > 9){
+            throw new SysException(ArticleCodeEnum.ARTICLE_LABEL_OUT);
+
+        } else {
+
+            Article article1 = new Article();
+            article1.setId(article.getId());
+            article1.setTitle(article.getTitle());
+            article1.setLabel(article.getLabel());
+            article1.setContent(article.getContent());
+            article1.setImage(realPath);
+            article1.setUpdatedAt(new Date());
+
+            if (article1 == null) {
+                throw new SysException(ArticleCodeEnum.ARTICLE_NONE);
+            }
+
+            articleRepository.update(article1);
+        }
+
+    }
+
+    /**
+     * 删除文章
+     * @param article
+     * @return
+     */
+    @Override
+    public void updateLabel(Article article) {
 
         Article article1 = new Article();
         article1.setId(article.getId());
-        article1.setTitle(article.getTitle());
-        article1.setLabel(article.getLabel());
-        article1.setContent(article.getContent());
-        article1.setImage(realPath);
-        article1.setUpdatedAt(new Date());
-        System.out.println(article1);
+        article1.setLabel(0);
 
-        if (article1 == null) {
-            throw new SysException(ArticleCodeEnum.ARTICLE_NONE);
+        if (article1 == null){
+            throw new SysException(ArticleCodeEnum.ARTICLE_LABEL_NONE);
         }
 
         articleRepository.update(article1);
