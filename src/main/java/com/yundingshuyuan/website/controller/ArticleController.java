@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
@@ -113,12 +114,13 @@ public class ArticleController extends BaseController {
     /**
      * 文章上传
      * @param article
-     * @param bindingResult
+     * @param image
+     * @param request
      * @return
      */
     @ApiOperation("文章上传")
     @PostMapping("/upload")
-    public ResultWrapper articleInsert(@Valid Article article, BindingResult bindingResult,
+    public ResultWrapper articleInsert(@Valid Article article,
                                        MultipartFile image,
                                        HttpServletRequest request) {
 
@@ -146,7 +148,42 @@ public class ArticleController extends BaseController {
             e.printStackTrace();
             return ResultWrapper.failure("上传信息失败！");
         }
+    }
 
+    /**
+     * 文章更新
+     * @param article
+     * @param image
+     * @param request
+     * @return
+     */
+    @ApiOperation("文章更新")
+    @PostMapping("/update")
+    @Transactional
+    public ResultWrapper updateArticle(@Valid Article article,
+                                       MultipartFile image,
+                                       HttpServletRequest request){
+        try{
+            if (image == null){
+                List<Article> articleList = articleService.articleUpdate(article);
+                return ResultWrapper.successWithData(articleList);
+            } else {
+                /**
+                 * 保存图片
+                 */
+                ResultWrapper resultWrapper= FileUtils.saveImage(request, image, UserConstant.ARTICLE_IMAGE_REAL_PATH);
+
+                //真实路径
+                String realPath = resultWrapper.getMessage();
+
+                List<Article> articleList = articleService.articleUpdateWithoutImage(article,realPath);
+
+                return ResultWrapper.successWithData(articleList);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResultWrapper.failure("更新文章失败！");
+        }
 
     }
 

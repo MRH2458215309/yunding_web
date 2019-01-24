@@ -111,6 +111,50 @@ public class ArticleServiceImpl extends BaseServiceImpl<Article, Integer> implem
 
     }
 
+    /**
+     * 文章更新（不包含图片）
+     * @param article
+     */
+    @Override
+    public List<Article> articleUpdate(Article article) {
+
+        Article article1 = new Article();
+        article1.setTitle(article.getTitle());
+        article1.setContent(article.getContent());
+        article1.setLabel(article.getLabel());
+        article1.setUpdatedAt(new Date());
+
+        if (article1 == null){
+            throw new SysException(ArticleCodeEnum.ARTICLE_NONE);
+        }
+
+        List<Article> articleList = articleRepository.updateWithoutImage(article1);
+        return articleList;
+    }
+
+    /**
+     * 文章更新（包含图片）
+     * @param article
+     * @param realPath
+     */
+    @Override
+    public List<Article> articleUpdateWithoutImage(Article article, String realPath) {
+
+        Article article1 = new Article();
+        article1.setTitle(article.getTitle());
+        article1.setContent(article.getContent());
+        article1.setLabel(article.getLabel());
+        article1.setImage(realPath);
+        article1.setUpdatedAt(new Date());
+
+        if (article1 == null) {
+            throw new SysException(ArticleCodeEnum.ARTICLE_NONE);
+        }
+
+        List<Article> articleList = articleRepository.update(article1);
+        return articleList;
+    }
+
 
 }
 

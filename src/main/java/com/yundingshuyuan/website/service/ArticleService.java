@@ -40,4 +40,9 @@ public interface ArticleService extends IBaseService<Article,Integer> {
      * @return
      */
     void articleInsert(Article article, String realPath);
+
+
+    List<Article> articleUpdate(Article article);
+
+    List<Article> articleUpdateWithoutImage(Article article, String realPath);
 }
