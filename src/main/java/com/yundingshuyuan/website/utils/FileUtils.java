@@ -17,9 +17,9 @@ public class FileUtils extends IOException {
      * @author leeyf
      * 图片上传
      */
-    public static ResultWrapper saveImage(HttpServletRequest request, MultipartFile image, String imageRealPath) throws IOException {
+    public static ResultWrapper saveImage(HttpServletRequest request, MultipartFile imageFile, String imageRealPath) throws IOException {
         //调用suffix方法获得文件后缀
-        String suffix = suffix(image);
+        String suffix = suffix(imageFile);
 
         // 生成随机文件名
         String uuid = UUID
@@ -43,7 +43,7 @@ public class FileUtils extends IOException {
             if(!dest.getParentFile().exists()){
                 dest.getParentFile().mkdirs();
             }
-            image.transferTo(dest);
+            imageFile.transferTo(dest);
             return ResultWrapper.success(imageRealPath+filename);
         }
     }
