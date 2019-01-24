@@ -1,5 +1,6 @@
 package com.yundingshuyuan.website.controller;
 
+import com.yundingshuyuan.website.constant.ArticleConstant;
 import com.yundingshuyuan.website.constant.UserConstant;
 import com.yundingshuyuan.website.controller.support.BaseController;
 import com.yundingshuyuan.website.entity.Article;
@@ -114,18 +115,19 @@ public class ArticleController extends BaseController {
     /**
      * 文章上传
      * @param article
-     * @param image
+     * @param imageFile
      * @param request
      * @return
      */
     @ApiOperation("文章上传")
     @PostMapping("/upload")
     public ResultWrapper articleInsert(@Valid Article article,
-                                       MultipartFile image,
+                                       MultipartFile imageFile,
                                        HttpServletRequest request) {
 
+        log.info(imageFile.getOriginalFilename());
         try {
-            if (image == null || article.getLabel() == null ||
+            if (imageFile == null || article.getLabel() == null ||
                     article.getContent() == null || article.getTitle() == null){
                 return ResultWrapper.failure("上传文章信息不能为空！");
 
@@ -133,7 +135,7 @@ public class ArticleController extends BaseController {
                 /**
                  * 保存图片
                  */
-                ResultWrapper resultWrapper= FileUtils.saveImage(request, image, UserConstant.ARTICLE_IMAGE_REAL_PATH);
+                ResultWrapper resultWrapper= FileUtils.saveImage(request, imageFile, ArticleConstant.ARTICLE_IMAGE_REAL_PATH);
 
                 //真实路径
                 String realPath = resultWrapper.getMessage();
@@ -153,32 +155,32 @@ public class ArticleController extends BaseController {
     /**
      * 文章更新
      * @param article
-     * @param image
+     * @param imageFile
      * @param request
      * @return
      */
     @ApiOperation("文章更新")
     @PostMapping("/update")
-    @Transactional
     public ResultWrapper updateArticle(@Valid Article article,
-                                       MultipartFile image,
+                                       MultipartFile imageFile,
                                        HttpServletRequest request){
         try{
-            if (image == null){
-                List<Article> articleList = articleService.articleUpdate(article);
-                return ResultWrapper.successWithData(articleList);
+            if (imageFile == null){
+                articleService.articleUpdate(article);
+                return ResultWrapper.success();
+
             } else {
                 /**
                  * 保存图片
                  */
-                ResultWrapper resultWrapper= FileUtils.saveImage(request, image, UserConstant.ARTICLE_IMAGE_REAL_PATH);
+                ResultWrapper resultWrapper= FileUtils.saveImage(request, imageFile, ArticleConstant.ARTICLE_IMAGE_REAL_PATH);
 
                 //真实路径
                 String realPath = resultWrapper.getMessage();
 
-                List<Article> articleList = articleService.articleUpdateWithoutImage(article,realPath);
+                articleService.articleUpdateWithImage(article,realPath);
 
-                return ResultWrapper.successWithData(articleList);
+                return ResultWrapper.success();
             }
         } catch (Exception e){
             e.printStackTrace();

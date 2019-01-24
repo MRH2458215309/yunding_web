@@ -42,7 +42,17 @@ public interface ArticleService extends IBaseService<Article,Integer> {
     void articleInsert(Article article, String realPath);
 
 
-    List<Article> articleUpdate(Article article);
+    /**
+     * 文章更新（不包含图片）
+     * @param article
+     */
+    void articleUpdate(Article article);
 
-    List<Article> articleUpdateWithoutImage(Article article, String realPath);
+
+    /**
+     * 文章更新（包含图片）
+     * @param article
+     * @param realPath
+     */
+    void articleUpdateWithImage(Article article, String realPath);
 }

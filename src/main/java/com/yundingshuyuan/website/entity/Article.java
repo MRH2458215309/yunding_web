@@ -2,6 +2,7 @@ package com.yundingshuyuan.website.entity;
 
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -64,6 +65,7 @@ public class Article {
     /**
      * 更改时间
      */
+    @Column(name = "updated_at")
     private Date updatedAt;
 
     public Article(){}

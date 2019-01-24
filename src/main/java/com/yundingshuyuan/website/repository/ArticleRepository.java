@@ -51,26 +51,22 @@ public interface ArticleRepository extends JpaRepository<Article,Integer>, Pagin
     Page<Article> findAll(Specification<Article> label, Pageable pageable);
 
 
+    /**
+     * 文章更新
+     * @param article
+     */
     @Modifying
-    @Query(value = "update t_article a set" +
-            "case when :#{#article.getTitle()} is not null then a.title = :#{#article.getTitle()}," +
-            "case when :#{#article.getImage()} is not null then a.image = :#{#article.getImage()}, " +
-            "case when :#{#article.getContent()} is not null then a.content = :#{#article.getContent()}," +
-            "case when :#{#article.getLabel()} is not null then a.label = :#{#article.getLabel()}," +
-            "case when :#{article.getUpdatedAt()} is not null then a.updatedAt = :#{#article.getUpdatedAt()}," +
-            "where a.id = :#{#article.getId()}"
-            ,nativeQuery = true)
-    List<Article> update(Article article);
-
-    @Modifying
-    @Query(value = "update t_article a set" +
-            "a.title = case when :#{#article.title} is null then :#{#article.title} else :#{#article.title} end ," +
-            "a.content= case when :#{#article.content} is null then :#{#article.content} else :#{#article.content} end ," +
-            "a.label= case when :#{#article.label} is null then :#{#article.label} else :#{#article.label} end ," +
-            "a.updatedAt= case when :#{article.updatedAt} is null then :#{#article.updatedAt} else :#{#article.updatedAt} end ," +
+    @Transactional
+    @Query(value = "update t_article a set " +
+            "a.title = case when :#{#article.title} is null then a.title else :#{#article.getTitle()} end ," +
+            "a.image = case when :#{#article.image} is null then a.image else :#{#article.getImage()} end , " +
+            "a.content = case when :#{#article.content} is null then a.content else :#{#article.getContent()} end ," +
+            "a.label = case when :#{#article.label} is null then a.label else :#{#article.getLabel()} end ," +
+            "a.updated_at = case when :#{#article.updatedAt} is null then a.updated_at else :#{#article.getUpdatedAt()} end " +
             "where a.id = :#{#article.id}"
             ,nativeQuery = true)
-    List<Article> updateWithoutImage(@Param("article") Article article);
+    void update(@Param("article") Article article);
+
 
 }
 
