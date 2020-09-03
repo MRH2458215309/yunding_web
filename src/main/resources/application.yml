@@ -5,7 +5,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url:  jdbc:mysql://106.15.198.212:3306/db_yunding_web
     username: root
-    password: leeyf100%
+    password: 
     jpa:
       database: mysql
       show-sql: true
